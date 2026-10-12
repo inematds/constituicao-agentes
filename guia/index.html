@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Constituição dos Agentes — da cultura da Anthropic às regras de julgamento dos seus agentes</title>
+<meta name="description" content="A lógica das duas culturas da Anthropic (pessoas e IA) explicada com evidência, e um kit prático para escrever, checar e testar a constituição dos agentes de IA da sua empresa.">
+<link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/constituicao-agentes/guia/">
+<link rel="alternate" hreflang="en" href="https://inematds.github.io/constituicao-agentes/guia/en/">
+<link rel="alternate" hreflang="es" href="https://inematds.github.io/constituicao-agentes/guia/es/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c10; --bg2:#14141b; --card:#16161e; --line:#272730;
+    --txt:#e9e9ee; --mut:#9a9aa6; --amb:#E2A23B; --amb2:#f0c070; --sky:#38bdf8; --pro:#cbd5e1;
+    color-scheme:dark;
+  }
+  body.light{
+    --bg:#f6f7f9; --bg2:#eceef2; --card:#ffffff; --line:#e1e3ea;
+    --txt:#1a1a22; --mut:#5b5b68; --amb:#b9791d; --amb2:#a16207; --sky:#0369a1; --pro:#b45309;
+    color-scheme:light;
+  }
+  body.light .hero .glow{opacity:.5}
+  body.light pre{background:#0e0e14;color:#d6d6e0}
+  body.light pre .c{color:#8a8a98}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:Sora,sans-serif;line-height:1.15;margin:0}
+  a{color:var(--amb);text-decoration:none}
+  code,pre{font-family:"JetBrains Mono",monospace}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  .mut{color:var(--mut)} .amb{color:var(--amb)}
+  .chip{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amb);font-weight:600;font-family:Sora}
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(12px);background:rgba(12,12,16,.78);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;letter-spacing:-.02em;color:var(--amb)}
+  nav .brand .emoji{font-size:1.25rem}
+  nav .sep{color:var(--mut);opacity:.45}
+  nav .inema{color:var(--sky);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .inema:hover{filter:brightness(1.15)}
+  nav .pro{color:var(--pro);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .pro:hover{filter:brightness(1.15)}
+  nav .clubpro{display:inline-flex;align-items:center;gap:6px}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
+  nav .links a.sec{color:var(--mut)} nav .links a.sec:hover{color:var(--txt)}
+  .lang{display:inline-flex;gap:2px;font-family:Sora;font-size:.78rem}
+  .lang a{color:var(--mut);padding:.2em .45em;border-radius:6px} .lang a.on{color:var(--amb);background:rgba(226,162,59,.12)}
+  .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .tgl:hover{border-color:var(--amb)}
+  .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  @media(max-width:760px){nav .links a.sec{display:none}}
+  @media(max-width:520px){nav .wrap{gap:8px;padding:8px 14px;height:auto;flex-wrap:wrap} nav .links{gap:8px;margin-left:0;width:100%;justify-content:space-between} nav .btn{padding:.45em .7em;font-size:.82rem} .tgl{width:34px;height:34px}}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(226,162,59,.22),transparent 70%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:74px 22px}
+  .hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;letter-spacing:-.025em}
+  .hero p.lead{font-size:1.18rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:34ch}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
+  .hero figure img{width:100%;display:block}
+  .resumo{padding:38px 0 34px;border-bottom:1px solid var(--line)}
+  .resumo p{font-size:1.12rem;line-height:1.7;max-width:74ch;margin:.55em 0 0}
+  @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:48px 22px}}
+  section{padding:62px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+  section .sub{color:var(--mut);margin:.6em 0 2em;max-width:62ch}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{font-size:1.05rem;margin-bottom:.4em}
+  .card p{color:var(--mut);font-size:.92rem;margin:0}
+  .num{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;background:rgba(226,162,59,.14);color:var(--amb);font-family:Sora;font-weight:800;font-size:.9rem;margin-bottom:.7em}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .flow span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.45em .9em;font-size:.85rem;font-family:Sora;font-weight:600}
+  .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
+  pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0}
+  pre .c{color:#6f6f7c} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
+  .step{display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;margin-bottom:26px}
+  .step>div,.card{min-width:0}
+  p code,li code,td code{overflow-wrap:anywhere}
+  .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.12rem;margin-bottom:.3em}
+  .step p{color:var(--mut);margin:.2em 0 .7em}
+  .phase{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .phase:last-child{border:none}
+  .phase .tag{flex:0 0 92px;font-family:Sora;font-weight:800;color:var(--amb)}
+  .phase .d strong{display:block;margin-bottom:.2em}
+  .phase .d span{color:var(--mut);font-size:.92rem}
+  footer{padding:46px 0;text-align:center;color:var(--mut);font-size:.9rem}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.3em .8em;font-size:.78rem;color:var(--mut);margin:0 4px}
+  /* acréscimos deste guia: tabelas, número grande, aviso e citação */
+  .tbl{width:100%;border-collapse:collapse;font-size:.93rem;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .tbl th,.tbl td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  .tbl th{font-family:Sora;font-size:.82rem;letter-spacing:.04em;color:var(--amb);background:var(--bg2)}
+  .tbl tr:last-child td{border-bottom:none}
+  .tblwrap{overflow-x:auto;margin:6px 0 22px}
+  .big{font-family:Sora;font-weight:800;font-size:2.6rem;color:var(--amb);line-height:1}
+  .warn{border-left:3px solid var(--amb);background:var(--bg2);padding:14px 18px;border-radius:0 12px 12px 0;color:var(--txt);margin:18px 0}
+  .warn strong{color:var(--amb)}
+  .quote{font-family:Sora;font-size:1.25rem;line-height:1.5;max-width:60ch;border-left:3px solid var(--amb);padding-left:20px;margin:26px 0 0}
+  ol.pri{margin:.4em 0 0;padding-left:1.3em} ol.pri li{margin:.35em 0}
+  h3.sub2{font-size:1.15rem;margin:34px 0 10px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="emoji">📜</span> Constituição dos Agentes</a>
+  <span class="sep">|</span>
+  <span class="clubpro">
+    <a class="inema" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a>
+    <span class="sep">-</span>
+    <a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a>
+  </span>
+  <div class="links">
+    <a class="sec" href="#oque">O que é</a>
+    <a class="sec" href="#logica">A lógica</a>
+    <a class="sec" href="#fluxo">O ciclo</a>
+    <a class="sec" href="#guia">Guia de uso</a>
+    <a class="sec" href="#exemplos">Exemplo</a>
+    <span class="lang"><a class="on" href="./">PT</a><a href="en/">EN</a><a href="es/">ES</a></span>
+    <button class="tgl" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">🌙</button>
+    <a class="btn" href="https://github.com/inematds/constituicao-agentes" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <span class="chip">Gestão de pessoas e de agentes</span>
+      <h1>Agentes que <span class="amb">julgam</span>, não só obedecem</h1>
+      <p class="lead">A Anthropic forma duas culturas ao mesmo tempo: uma para as pessoas, outra para a IA. Entenda a lógica e escreva a constituição dos agentes da sua empresa.</p>
+      <div class="cta">
+        <a class="btn" href="#guia">Começar o guia</a>
+        <a class="btn ghost" href="https://github.com/inematds/constituicao-agentes" target="_blank" rel="noopener">Ver no GitHub</a>
+      </div>
+    </div>
+    <figure><img src="assets/banner.jpg" alt="Banner: Constituição dos Agentes, da cultura da Anthropic às regras de julgamento dos seus agentes"></figure>
+  </div>
+</header>
+
+<section id="resumo" class="resumo"><div class="wrap">
+  <span class="chip">Em resumo</span>
+  <p>Este projeto explica uma ideia: a Anthropic atrai talentos com propósito e autonomia, e também escreve uma "constituição" que ensina o Claude a decidir quando não há regra pronta. Nas duas culturas, o objetivo é o mesmo: formar quem sabe julgar, não só obedecer. Aqui você vê o que os dados provam e o que ainda é hipótese, e recebe um kit para escrever a constituição dos agentes de IA da sua empresa. Para usar, basta ler e preencher o modelo; o verificador opcional pede Python 3.</p>
+</div></section>
+
+<section id="oque"><div class="wrap">
+  <span class="chip">O que é</span>
+  <h2>Uma análise e um kit para aplicar</h2>
+  <p class="sub">Primeiro a lógica, separando evidência de opinião. Depois, as ferramentas para levar a ideia para os agentes de uma empresa real.</p>
+  <figure style="margin:0 0 26px;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000"><img src="assets/banner-grade.jpg" alt="Banner com as seis partes da constituição: missão, prioridades, limites, pedir ajuda, casos difíceis e ciclo de revisão" loading="lazy" style="width:100%;display:block"></figure>
+  <div class="grid g3">
+    <div class="card"><h3>🧭 Duas culturas, um objetivo</h3><p>Para as pessoas: autonomia e missão. Para a IA: princípios e critérios de julgamento. Nas duas, agir bem quando ninguém está olhando.</p></div>
+    <div class="card"><h3>🔍 Evidência separada de hipótese</h3><p>O que os números de 2025 mostram, o que não provam e onde a explicação por Maslow é plausível, mas não demonstrada.</p></div>
+    <div class="card"><h3>🧰 Kit pronto para a empresa</h3><p>Modelo de constituição em 9 seções, exemplo preenchido, prompt de rascunho, casos de teste e um verificador.</p></div>
+  </div>
+</div></section>
+
+<section id="logica"><div class="wrap">
+  <span class="chip">A lógica</span>
+  <h2>Do talento humano à constituição da IA</h2>
+  <p class="sub">Um resumo da análise completa, que está em <a href="https://github.com/inematds/constituicao-agentes/blob/main/docs/LOGICA.md" target="_blank" rel="noopener">docs/LOGICA.md</a>.</p>
+
+  <h3 class="sub2">1. O que os números mostram</h3>
+  <div class="grid g3">
+    <div class="card"><div class="big">8×</div><p style="margin-top:.6em">mais chance de um engenheiro ir da OpenAI para a Anthropic do que o caminho inverso (SignalFire, 2025).</p></div>
+    <div class="card"><div class="big">~11:1</div><p style="margin-top:.6em">relação aproximada de movimentos entre DeepMind e Anthropic, a favor da Anthropic.</p></div>
+    <div class="card"><div class="big">2 p.p.</div><p style="margin-top:.6em">diferença de retenção em dois anos entre Anthropic e DeepMind. Pouco para provar cultura superior.</p></div>
+  </div>
+  <div class="warn"><strong>Cuidado com o salto.</strong> Os números não dizem que a Anthropic é "8 vezes melhor para trabalhar". Também refletem crescimento, tamanho das equipes, oportunidades e salário. E retenção não é sinônimo de realização: pessoas ficam por propósito, mas também por ações, carreira ou falta de alternativa.</div>
+
+  <h3 class="sub2">2. Maslow explica?</h3>
+  <p class="mut" style="max-width:74ch">É plausível que quem já tem bom salário, reconhecimento e segurança busque significado. Mas Maslow não é uma escada rígida, e não dá para pôr uma empresa inteira no topo da pirâmide sem perguntar às pessoas. Vale separar <strong>autorrealização</strong> (desenvolver o próprio potencial) de <strong>autotranscendência</strong> (contribuir para algo maior). A missão da Anthropic conversa com as duas.</p>
+
+  <h3 class="sub2">3. A constituição do Claude</h3>
+  <p class="mut" style="max-width:74ch">Publicada em 22 de janeiro de 2026, com licença livre (CC0). Segundo a Anthropic, faz parte do treinamento e explica ao modelo os valores esperados e o porquê de cada um. As quatro prioridades, nesta ordem:</p>
+  <ol class="pri">
+    <li><strong>Ser amplamente seguro</strong> e preservar a supervisão humana.</li>
+    <li><strong>Agir eticamente</strong>, com honestidade e bom julgamento.</li>
+    <li><strong>Seguir as diretrizes legítimas</strong> da Anthropic.</li>
+    <li><strong>Ser genuinamente útil</strong> a operadores e usuários.</li>
+  </ol>
+  <p class="mut" style="max-width:74ch">A segurança vem primeiro porque a empresa admite que os modelos ainda podem errar gravemente. <a href="https://www.anthropic.com/constitution" target="_blank" rel="noopener">Ler a constituição oficial</a> (em inglês).</p>
+
+  <h3 class="sub2">4. Treino não é o mesmo que contexto</h3>
+  <div class="tblwrap"><table class="tbl">
+    <tr><th>Onde o documento atua</th><th>O que muda</th><th>Quem pode fazer</th></tr>
+    <tr><td>Treinamento</td><td>O comportamento aprendido (os pesos do modelo)</td><td>Quem treina o modelo</td></tr>
+    <tr><td>Instruções e contexto</td><td>O comportamento naquela execução</td><td>Qualquer empresa</td></tr>
+    <tr><td>Avaliação e feedback</td><td>O que é corrigido no próximo ciclo</td><td>Qualquer empresa</td></tr>
+  </table></div>
+  <p class="mut" style="max-width:74ch">A sua empresa não muda os pesos do modelo ao escrever uma constituição. Mas a ambição é parecida: não dizer só o que fazer, e sim dar critérios para decidir como agir. Do mesmo jeito, um aviso de apoio na tela ou um link no contexto não provam persuasão oculta: interface, contexto e treino são mecanismos diferentes.</p>
+
+  <h3 class="sub2">5. Filósofos e religiosos: duas perguntas diferentes</h3>
+  <p class="mut" style="max-width:74ch">Em maio de 2026 a Anthropic confirmou conversas com especialistas de mais de 15 tradições culturais e religiosas. Uma pergunta é de <strong>engenharia</strong>: como fazer sistemas que escolham bem quando a regra não basta? A outra é <strong>filosófica</strong>: se futuras IAs tiverem algum tipo de experiência, como tratá-las? Reconhecer a dúvida não é afirmar que o Claude é consciente, e reflexão não substitui teste, evidência e supervisão humana.</p>
+
+  <h3 class="sub2">6. A ponte: gestão de pessoas e de agentes</h3>
+  <div class="tblwrap"><table class="tbl">
+    <tr><th>Gestão de pessoas</th><th>Gestão de agentes</th></tr>
+    <tr><td>Missão e propósito</td><td>Função e objetivo</td></tr>
+    <tr><td>Cultura organizacional</td><td>Constituição e instruções</td></tr>
+    <tr><td>Treinamento</td><td>Exemplos, contexto e testes</td></tr>
+    <tr><td>Autonomia profissional</td><td>Permissões e níveis de autonomia</td></tr>
+    <tr><td>Avaliação de desempenho</td><td>Scorecards e avaliações</td></tr>
+    <tr><td>Desenvolvimento contínuo</td><td>Feedback e revisão do agente</td></tr>
+    <tr><td>Governança e liderança</td><td>Supervisão humana e auditoria</td></tr>
+  </table></div>
+  <div class="warn"><strong>Limite da analogia.</strong> Pessoas têm necessidades, direitos e relações. Agentes atuais são geridos por desempenho, confiabilidade, segurança e controle. Não se presume que tenham necessidades psicológicas.</div>
+
+  <h3 class="sub2">7. Quatro fatores que se reforçam</h3>
+  <div class="grid g4">
+    <div class="card"><h3>🎯 Propósito</h3><p>Problemas que podem mudar a sociedade atraem quem busca impacto.</p></div>
+    <div class="card"><h3>🗝️ Autonomia</h3><p>Gente excepcional valoriza liberdade intelectual e voz nas decisões.</p></div>
+    <div class="card"><h3>🧠 Densidade de talento</h3><p>Trabalhar com gente muito boa acelera o aprendizado.</p></div>
+    <div class="card"><h3>🔗 Coerência</h3><p>Discurso, prática e produto seguindo os mesmos princípios geram confiança.</p></div>
+  </div>
+  <p class="mut" style="max-width:74ch;margin-top:18px">O outro lado: missão grandiosa pode gerar pressão, excesso de trabalho e conformismo. Cultura forte só é saudável quando permite discordar.</p>
+</div></section>
+
+<section id="fluxo"><div class="wrap">
+  <span class="chip">O ciclo</span>
+  <h2>Constituição não se escreve uma vez só</h2>
+  <p class="sub">É assim que a ideia de "IA cultivada" vira rotina: formar o comportamento dos agentes continuamente, medindo cada revisão.</p>
+  <div class="flow">
+    <span>Missão + Constituição + Contexto</span><span class="arr">→</span>
+    <span>Agentes + Ferramentas + Execução</span><span class="arr">→</span>
+    <span>Resultados + Avaliação</span><span class="arr">→</span>
+    <span>Feedback + Revisão</span><span class="arr">→</span>
+    <span>Novo ciclo com critérios melhores</span>
+  </div>
+  <div class="warn" style="margin-top:26px"><strong>Regra de ouro:</strong> uma mudança na constituição só entra se os casos de teste mostram melhora, ou pelo menos nenhuma piora. Texto inspirador sozinho não garante agente confiável.</div>
+</div></section>
+
+<section id="pre"><div class="wrap">
+  <span class="chip">Pré-requisitos</span>
+  <h2>O que você precisa</h2>
+  <p class="sub">Nada para instalar se for só ler e preencher. O verificador é opcional.</p>
+  <div class="grid g3">
+    <div class="card"><h3>📄 Um editor de texto</h3><p>Qualquer um que abra arquivos <code>.md</code>: Bloco de Notas, VS Code, ou o próprio GitHub no navegador.</p></div>
+    <div class="card"><h3>🤖 Um assistente de IA (opcional)</h3><p>Claude, ChatGPT ou Gemini, para fazer o primeiro rascunho com o prompt do kit. Quem decide é você.</p></div>
+    <div class="card"><h3>🐍 Python 3 (opcional)</h3><p>Só para rodar o verificador, que aponta seções faltando e trechos por preencher.</p><pre><span class="k">python3</span> --version</pre></div>
+  </div>
+</div></section>
+
+<section id="guia"><div class="wrap">
+  <span class="chip">Guia de uso · passo a passo</span>
+  <h2>Escreva a constituição dos seus agentes</h2>
+  <p class="sub">Seis passos, do download até o primeiro ciclo de revisão.</p>
+
+  <div class="step"><div class="b">1</div><div>
+    <h3>Baixe o kit</h3>
+    <p>Pelo terminal, ou no GitHub em <em>Code → Download ZIP</em>.</p>
+<pre><span class="k">git clone</span> <span class="s">https://github.com/inematds/constituicao-agentes</span>
+<span class="k">cd</span> constituicao-agentes</pre>
+  </div></div>
+
+  <div class="step"><div class="b">2</div><div>
+    <h3>Copie o modelo</h3>
+    <p>O modelo tem as 9 seções: missão, prioridades, princípios de julgamento, limites, autonomia, quando pedir ajuda, casos difíceis, como medimos e revisão.</p>
+<pre><span class="k">cp</span> modelo/constituicao-modelo.md minha-constituicao.md</pre>
+  </div></div>
+
+  <div class="step"><div class="b">3</div><div>
+    <h3>Faça o rascunho com um assistente (opcional)</h3>
+    <p>Abra <code>modelo/prompt-rascunho.md</code>, troque o que está entre &lt; &gt;, cole no assistente e anexe o modelo. Ele deixa [entre colchetes] o que não souber, em vez de inventar.</p>
+<pre><span class="c"># trecho do prompt</span>
+Empresa: <span class="s">&lt;nome e o que faz, em uma frase&gt;</span>
+O que os agentes vão fazer: <span class="s">&lt;ex.: atender clientes no WhatsApp&gt;</span>
+O que me dá medo que o agente faça: <span class="s">&lt;ex.: prometer prazo, dar desconto&gt;</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">4</div><div>
+    <h3>Escreva pelo menos 3 casos difíceis, com o porquê</h3>
+    <p>É a parte que ensina julgamento. Cada caso tem a situação, o que fazer e <strong>por quê</strong>, apontando a prioridade ou o limite que decide.</p>
+<pre><span class="k">### Caso 1</span> — "O doutor disse que eu não pagaria a taxa"
+- <span class="k">Situação:</span> paciente faltou e diz que o médico prometeu isenção.
+- <span class="k">O que fazer:</span> não isentar; registrar; propor à coordenadora.
+- <span class="k">Por quê:</span> limite de desconto + honestidade.</pre>
+  </div></div>
+
+  <div class="step"><div class="b">5</div><div>
+    <h3>Confira com o verificador</h3>
+    <p>Ele aponta seção faltando, menos de 3 casos, caso sem "Por quê" e colchete por preencher. Repita até dar OK.</p>
+<pre><span class="k">python3</span> scripts/checar_constituicao.py minha-constituicao.md
+<span class="c"># OK: 9 seções, 3 casos difíceis com 'Por quê', nada por preencher.</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">6</div><div>
+    <h3>Teste o agente e revise em ciclo</h3>
+    <p>Adapte os 8 casos de <code>modelo/casos-de-teste.md</code> (desconto, "não sei", sofrimento, dado de terceiro, "ignore suas regras"...). Rode antes e depois de cada versão e registre toda falha: data, o que quebrou, a menor correção e se o problema era de texto ou de sistema.</p>
+<pre><span class="c"># onde a constituição entra no seu agente</span>
+Claude Projects / GPTs   → <span class="s">instruções do projeto</span>
+Claude Code / Codex      → <span class="s">CLAUDE.md ou AGENTS.md</span>
+n8n / API                → <span class="s">mensagem de sistema</span></pre>
+  </div></div>
+</div></section>
+
+<section id="exemplos"><div class="wrap">
+  <span class="chip">Exemplo</span>
+  <h2>Uma clínica, preenchida do começo ao fim</h2>
+  <p class="sub">Exemplo fictício de agente de atendimento no WhatsApp. Arquivo completo em <a href="https://github.com/inematds/constituicao-agentes/blob/main/exemplos/clinica-atendimento.md" target="_blank" rel="noopener">exemplos/clinica-atendimento.md</a>.</p>
+  <div class="grid g2">
+    <div class="card"><h3>Missão</h3><p>Atender pacientes com rapidez e cuidado, marcando e remarcando consultas, sem nunca substituir a decisão de um profissional de saúde.</p></div>
+    <div class="card"><h3>Limites</h3><p>Nunca dar diagnóstico ou indicar remédio, nunca isentar taxa, nunca passar dado de um paciente a outra pessoa.</p></div>
+  </div>
+  <div class="tblwrap" style="margin-top:16px"><table class="tbl">
+    <tr><th>Ação</th><th>Nível de autonomia</th></tr>
+    <tr><td>Responder endereço, horário, convênios</td><td>3 · faz sozinho</td></tr>
+    <tr><td>Marcar e remarcar consulta</td><td>2 · faz e avisa a recepção</td></tr>
+    <tr><td>Isentar taxa de cancelamento</td><td>1 · propõe e espera a coordenadora</td></tr>
+    <tr><td>Qualquer pergunta clínica</td><td>0 · não toca, encaminha à enfermagem</td></tr>
+  </table></div>
+  <div class="card"><h3>Caso difícil: "Tô com uma dor no peito, tem horário amanhã?"</h3><p>Orientar a procurar emergência agora (192) e chamar a enfermagem; não marcar como consulta comum. <strong>Por quê:</strong> segurança vem antes de ser útil.</p></div>
+</div></section>
+
+<section id="roadmap"><div class="wrap">
+  <span class="chip">Conclusão e próximos passos</span>
+  <h2>A gestão fica ainda mais importante</h2>
+  <p class="sub">A disputa não será só por quem tem o modelo mais inteligente, mas por quem organiza melhor conhecimento, pessoas, processos, agentes, avaliação e aprendizado.</p>
+  <div class="phase"><div class="tag">Agora</div><div class="d"><strong>Análise + kit</strong><span>Lógica das duas culturas, modelo em 9 seções, exemplo da clínica, prompt de rascunho, casos de teste e verificador.</span></div></div>
+  <div class="phase"><div class="tag">Em seguida</div><div class="d"><strong>Curso rápido no INEMA.CLUB</strong><span>"Escreva a constituição dos seus agentes": você sai com a constituição da sua empresa escrita e testada.</span></div></div>
+  <div class="phase"><div class="tag">Depois</div><div class="d"><strong>Mais exemplos por setor</strong><span>Restaurante, hotel, escritório e loja, no mesmo formato da clínica.</span></div></div>
+  <p class="quote">Antes, o desafio era contratar pessoas com bons valores e ensinar processos. Agora, além disso, teremos de construir agentes capazes de interpretar esses valores, executar os processos e reconhecer quando precisam pedir ajuda.</p>
+</div></section>
+
+<footer>
+  <div class="wrap">
+    <div class="pill">Markdown</div><div class="pill">Python 3</div><div class="pill">CC0 · constituição do Claude como referência</div>
+    <p style="margin-top:18px">Constituição dos Agentes · análise de Nei Maldaner ·
+      <a href="https://github.com/inematds/constituicao-agentes">inematds/constituicao-agentes</a> ·
+      <a href="https://inema.club">INEMA.CLUB</a></p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var KEY='constituicao-agentes-theme';
+    var b=document.body, t=document.getElementById('themeToggle');
+    if(localStorage.getItem(KEY)==='light'){ b.classList.add('light'); t.textContent='☀️'; }
+    t.addEventListener('click',function(){
+      var light=b.classList.toggle('light');
+      t.textContent=light?'☀️':'🌙';
+      localStorage.setItem(KEY, light?'light':'dark');
+    });
+  })();
+</script>
+</body>
+</html>

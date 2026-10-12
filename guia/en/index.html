@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agents' Constitution — from Anthropic's culture to the judgment rules of your agents</title>
+<meta name="description" content="The logic of Anthropic's two cultures (people and AI) explained with evidence, and a practical kit to write, check and test the constitution of your company's AI agents.">
+<link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/constituicao-agentes/guia/">
+<link rel="alternate" hreflang="en" href="https://inematds.github.io/constituicao-agentes/guia/en/">
+<link rel="alternate" hreflang="es" href="https://inematds.github.io/constituicao-agentes/guia/es/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c10; --bg2:#14141b; --card:#16161e; --line:#272730;
+    --txt:#e9e9ee; --mut:#9a9aa6; --amb:#E2A23B; --amb2:#f0c070; --sky:#38bdf8; --pro:#cbd5e1;
+    color-scheme:dark;
+  }
+  body.light{
+    --bg:#f6f7f9; --bg2:#eceef2; --card:#ffffff; --line:#e1e3ea;
+    --txt:#1a1a22; --mut:#5b5b68; --amb:#b9791d; --amb2:#a16207; --sky:#0369a1; --pro:#b45309;
+    color-scheme:light;
+  }
+  body.light .hero .glow{opacity:.5}
+  body.light pre{background:#0e0e14;color:#d6d6e0}
+  body.light pre .c{color:#8a8a98}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:Sora,sans-serif;line-height:1.15;margin:0}
+  a{color:var(--amb);text-decoration:none}
+  code,pre{font-family:"JetBrains Mono",monospace}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  .mut{color:var(--mut)} .amb{color:var(--amb)}
+  .chip{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amb);font-weight:600;font-family:Sora}
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(12px);background:rgba(12,12,16,.78);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;letter-spacing:-.02em;color:var(--amb)}
+  nav .brand .emoji{font-size:1.25rem}
+  nav .sep{color:var(--mut);opacity:.45}
+  nav .inema{color:var(--sky);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .inema:hover{filter:brightness(1.15)}
+  nav .pro{color:var(--pro);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .pro:hover{filter:brightness(1.15)}
+  nav .clubpro{display:inline-flex;align-items:center;gap:6px}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
+  nav .links a.sec{color:var(--mut)} nav .links a.sec:hover{color:var(--txt)}
+  .lang{display:inline-flex;gap:2px;font-family:Sora;font-size:.78rem}
+  .lang a{color:var(--mut);padding:.2em .45em;border-radius:6px} .lang a.on{color:var(--amb);background:rgba(226,162,59,.12)}
+  .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .tgl:hover{border-color:var(--amb)}
+  .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  @media(max-width:760px){nav .links a.sec{display:none}}
+  @media(max-width:520px){nav .wrap{gap:8px;padding:8px 14px;height:auto;flex-wrap:wrap} nav .links{gap:8px;margin-left:0;width:100%;justify-content:space-between} nav .btn{padding:.45em .7em;font-size:.82rem} .tgl{width:34px;height:34px}}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(226,162,59,.22),transparent 70%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:74px 22px}
+  .hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;letter-spacing:-.025em}
+  .hero p.lead{font-size:1.18rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:34ch}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
+  .hero figure img{width:100%;display:block}
+  .resumo{padding:38px 0 34px;border-bottom:1px solid var(--line)}
+  .resumo p{font-size:1.12rem;line-height:1.7;max-width:74ch;margin:.55em 0 0}
+  @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:48px 22px}}
+  section{padding:62px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+  section .sub{color:var(--mut);margin:.6em 0 2em;max-width:62ch}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{font-size:1.05rem;margin-bottom:.4em}
+  .card p{color:var(--mut);font-size:.92rem;margin:0}
+  .num{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;background:rgba(226,162,59,.14);color:var(--amb);font-family:Sora;font-weight:800;font-size:.9rem;margin-bottom:.7em}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .flow span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.45em .9em;font-size:.85rem;font-family:Sora;font-weight:600}
+  .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
+  pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0}
+  pre .c{color:#6f6f7c} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
+  .step{display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;margin-bottom:26px}
+  .step>div,.card{min-width:0}
+  p code,li code,td code{overflow-wrap:anywhere}
+  .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.12rem;margin-bottom:.3em}
+  .step p{color:var(--mut);margin:.2em 0 .7em}
+  .phase{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .phase:last-child{border:none}
+  .phase .tag{flex:0 0 92px;font-family:Sora;font-weight:800;color:var(--amb)}
+  .phase .d strong{display:block;margin-bottom:.2em}
+  .phase .d span{color:var(--mut);font-size:.92rem}
+  footer{padding:46px 0;text-align:center;color:var(--mut);font-size:.9rem}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.3em .8em;font-size:.78rem;color:var(--mut);margin:0 4px}
+  /* additions in this guide: tables, big number, notice and quote */
+  .tbl{width:100%;border-collapse:collapse;font-size:.93rem;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .tbl th,.tbl td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  .tbl th{font-family:Sora;font-size:.82rem;letter-spacing:.04em;color:var(--amb);background:var(--bg2)}
+  .tbl tr:last-child td{border-bottom:none}
+  .tblwrap{overflow-x:auto;margin:6px 0 22px}
+  .big{font-family:Sora;font-weight:800;font-size:2.6rem;color:var(--amb);line-height:1}
+  .warn{border-left:3px solid var(--amb);background:var(--bg2);padding:14px 18px;border-radius:0 12px 12px 0;color:var(--txt);margin:18px 0}
+  .warn strong{color:var(--amb)}
+  .quote{font-family:Sora;font-size:1.25rem;line-height:1.5;max-width:60ch;border-left:3px solid var(--amb);padding-left:20px;margin:26px 0 0}
+  ol.pri{margin:.4em 0 0;padding-left:1.3em} ol.pri li{margin:.35em 0}
+  h3.sub2{font-size:1.15rem;margin:34px 0 10px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="emoji">📜</span> Agents' Constitution</a>
+  <span class="sep">|</span>
+  <span class="clubpro">
+    <a class="inema" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a>
+    <span class="sep">-</span>
+    <a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a>
+  </span>
+  <div class="links">
+    <a class="sec" href="#oque">What it is</a>
+    <a class="sec" href="#logica">The logic</a>
+    <a class="sec" href="#fluxo">The cycle</a>
+    <a class="sec" href="#guia">User guide</a>
+    <a class="sec" href="#exemplos">Example</a>
+    <span class="lang"><a href="../">PT</a><a class="on" href="./">EN</a><a href="../es/">ES</a></span>
+    <button class="tgl" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+    <a class="btn" href="https://github.com/inematds/constituicao-agentes" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <span class="chip">Managing people and agents</span>
+      <h1>Agents that <span class="amb">judge</span>, not just obey</h1>
+      <p class="lead">Anthropic shapes two cultures at once: one for its people, another for its AI. Understand the logic and write the constitution of your company's agents.</p>
+      <div class="cta">
+        <a class="btn" href="#guia">Start the guide</a>
+        <a class="btn ghost" href="https://github.com/inematds/constituicao-agentes" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+    </div>
+    <figure><img src="../assets/banner-en.jpg" alt="Banner: Agents' Constitution, from Anthropic's culture to the judgment rules of your agents"></figure>
+  </div>
+</header>
+
+<section id="resumo" class="resumo"><div class="wrap">
+  <span class="chip">In short</span>
+  <p>This project explains one idea: Anthropic attracts talent with purpose and autonomy, and it also writes a "constitution" that teaches Claude to decide when there is no ready-made rule. In both cultures, the goal is the same: to shape people who know how to judge, not just obey. Here you see what the data proves and what is still a hypothesis, and you get a kit to write the constitution of your company's AI agents. To use it, just read and fill in the template; the optional checker requires Python 3.</p>
+</div></section>
+
+<section id="oque"><div class="wrap">
+  <span class="chip">What it is</span>
+  <h2>An analysis and a kit to put it into practice</h2>
+  <p class="sub">First the logic, separating evidence from opinion. Then the tools to bring the idea to the agents of a real company.</p>
+  <figure style="margin:0 0 26px;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000"><img src="../assets/banner-grade-en.jpg" alt="Banner with the six parts of the constitution: mission, priorities, limits, asking for help, hard cases and review cycle" loading="lazy" style="width:100%;display:block"></figure>
+  <div class="grid g3">
+    <div class="card"><h3>🧭 Two cultures, one goal</h3><p>For people: autonomy and mission. For AI: principles and criteria for judgment. In both, acting well when no one is watching.</p></div>
+    <div class="card"><h3>🔍 Evidence separated from hypothesis</h3><p>What the 2025 numbers show, what they do not prove, and where the Maslow explanation is plausible but not demonstrated.</p></div>
+    <div class="card"><h3>🧰 Ready-made kit for the company</h3><p>A constitution template with 9 sections, a filled-in example, a drafting prompt, test cases and a checker.</p></div>
+  </div>
+</div></section>
+
+<section id="logica"><div class="wrap">
+  <span class="chip">The logic</span>
+  <h2>From human talent to the AI constitution</h2>
+  <p class="sub">A summary of the full analysis, which is in <a href="https://github.com/inematds/constituicao-agentes/blob/main/docs/LOGICA.md" target="_blank" rel="noopener">docs/LOGICA.md</a> (in Portuguese).</p>
+
+  <h3 class="sub2">1. What the numbers show</h3>
+  <div class="grid g3">
+    <div class="card"><div class="big">8×</div><p style="margin-top:.6em">more likely for an engineer to go from OpenAI to Anthropic than the other way around (SignalFire, 2025).</p></div>
+    <div class="card"><div class="big">~11:1</div><p style="margin-top:.6em">approximate ratio of moves between DeepMind and Anthropic, in Anthropic's favor.</p></div>
+    <div class="card"><div class="big">2 p.p.</div><p style="margin-top:.6em">difference in two-year retention between Anthropic and DeepMind. Too little to prove a superior culture.</p></div>
+  </div>
+  <div class="warn"><strong>Beware of the leap.</strong> The numbers do not say Anthropic is "8 times better to work for". They also reflect growth, team size, opportunities and pay. And retention is not the same as fulfillment: people stay for purpose, but also for stock, career or lack of alternatives.</div>
+
+  <h3 class="sub2">2. Does Maslow explain it?</h3>
+  <p class="mut" style="max-width:74ch">It is plausible that people who already have good pay, recognition and security look for meaning. But Maslow is not a rigid ladder, and you cannot place an entire company at the top of the pyramid without asking the people. It is worth separating <strong>self-actualization</strong> (developing one's own potential) from <strong>self-transcendence</strong> (contributing to something larger). Anthropic's mission speaks to both.</p>
+
+  <h3 class="sub2">3. Claude's constitution</h3>
+  <p class="mut" style="max-width:74ch">Published on January 22, 2026, under a free license (CC0). According to Anthropic, it is part of training and explains to the model the values expected and the reason behind each one. The four priorities, in this order:</p>
+  <ol class="pri">
+    <li><strong>Be broadly safe</strong> and preserve human oversight.</li>
+    <li><strong>Act ethically</strong>, with honesty and good judgment.</li>
+    <li><strong>Follow Anthropic's legitimate guidelines.</strong></li>
+    <li><strong>Be genuinely helpful</strong> to operators and users.</li>
+  </ol>
+  <p class="mut" style="max-width:74ch">Safety comes first because the company admits that models can still make serious mistakes. <a href="https://www.anthropic.com/constitution" target="_blank" rel="noopener">Read the official constitution</a>.</p>
+
+  <h3 class="sub2">4. Training is not the same as context</h3>
+  <div class="tblwrap"><table class="tbl">
+    <tr><th>Where the document acts</th><th>What changes</th><th>Who can do it</th></tr>
+    <tr><td>Training</td><td>The learned behavior (the model's weights)</td><td>Whoever trains the model</td></tr>
+    <tr><td>Instructions and context</td><td>The behavior in that run</td><td>Any company</td></tr>
+    <tr><td>Evaluation and feedback</td><td>What gets corrected in the next cycle</td><td>Any company</td></tr>
+  </table></div>
+  <p class="mut" style="max-width:74ch">Your company does not change the model's weights by writing a constitution. But the ambition is similar: not just saying what to do, but giving criteria to decide how to act. In the same way, a support notice on screen or a link in the context does not prove hidden persuasion: interface, context and training are different mechanisms.</p>
+
+  <h3 class="sub2">5. Philosophers and religious leaders: two different questions</h3>
+  <p class="mut" style="max-width:74ch">In May 2026 Anthropic confirmed conversations with experts from more than 15 cultural and religious traditions. One question is <strong>engineering</strong>: how do we build systems that choose well when the rule is not enough? The other is <strong>philosophical</strong>: if future AIs have some kind of experience, how should we treat them? Acknowledging the doubt is not claiming that Claude is conscious, and reflection does not replace testing, evidence and human oversight.</p>
+
+  <h3 class="sub2">6. The bridge: managing people and agents</h3>
+  <div class="tblwrap"><table class="tbl">
+    <tr><th>Managing people</th><th>Managing agents</th></tr>
+    <tr><td>Mission and purpose</td><td>Role and objective</td></tr>
+    <tr><td>Organizational culture</td><td>Constitution and instructions</td></tr>
+    <tr><td>Training</td><td>Examples, context and tests</td></tr>
+    <tr><td>Professional autonomy</td><td>Permissions and autonomy levels</td></tr>
+    <tr><td>Performance review</td><td>Scorecards and evaluations</td></tr>
+    <tr><td>Continuous development</td><td>Feedback and agent review</td></tr>
+    <tr><td>Governance and leadership</td><td>Human oversight and audit</td></tr>
+  </table></div>
+  <div class="warn"><strong>Limit of the analogy.</strong> People have needs, rights and relationships. Today's agents are managed by performance, reliability, safety and control. They are not assumed to have psychological needs.</div>
+
+  <h3 class="sub2">7. Four factors that reinforce each other</h3>
+  <div class="grid g4">
+    <div class="card"><h3>🎯 Purpose</h3><p>Problems that can change society attract people seeking impact.</p></div>
+    <div class="card"><h3>🗝️ Autonomy</h3><p>Exceptional people value intellectual freedom and a voice in decisions.</p></div>
+    <div class="card"><h3>🧠 Talent density</h3><p>Working with very good people speeds up learning.</p></div>
+    <div class="card"><h3>🔗 Coherence</h3><p>Words, practice and product following the same principles build trust.</p></div>
+  </div>
+  <p class="mut" style="max-width:74ch;margin-top:18px">The flip side: a grand mission can create pressure, overwork and conformity. A strong culture is only healthy when it allows disagreement.</p>
+</div></section>
+
+<section id="fluxo"><div class="wrap">
+  <span class="chip">The cycle</span>
+  <h2>A constitution is not written just once</h2>
+  <p class="sub">This is how the idea of "cultivated AI" becomes routine: shaping the behavior of agents continuously, measuring each revision.</p>
+  <div class="flow">
+    <span>Mission + Constitution + Context</span><span class="arr">→</span>
+    <span>Agents + Tools + Execution</span><span class="arr">→</span>
+    <span>Results + Evaluation</span><span class="arr">→</span>
+    <span>Feedback + Revision</span><span class="arr">→</span>
+    <span>New cycle with better criteria</span>
+  </div>
+  <div class="warn" style="margin-top:26px"><strong>Golden rule:</strong> a change to the constitution only goes in if the test cases show improvement, or at least no regression. Inspiring text alone does not guarantee a reliable agent.</div>
+</div></section>
+
+<section id="pre"><div class="wrap">
+  <span class="chip">Prerequisites</span>
+  <h2>What you need</h2>
+  <p class="sub">Nothing to install if you only read and fill in. The checker is optional.</p>
+  <div class="grid g3">
+    <div class="card"><h3>📄 A text editor</h3><p>Any one that opens <code>.md</code> files: Notepad, VS Code, or GitHub itself in the browser.</p></div>
+    <div class="card"><h3>🤖 An AI assistant (optional)</h3><p>Claude, ChatGPT or Gemini, to make the first draft with the kit's prompt. You decide.</p></div>
+    <div class="card"><h3>🐍 Python 3 (optional)</h3><p>Only to run the checker, which flags missing sections and parts left to fill in.</p><pre><span class="k">python3</span> --version</pre></div>
+  </div>
+</div></section>
+
+<section id="guia"><div class="wrap">
+  <span class="chip">User guide · step by step</span>
+  <h2>Write the constitution of your agents</h2>
+  <p class="sub">Six steps, from download to the first review cycle.</p>
+
+  <div class="step"><div class="b">1</div><div>
+    <h3>Download the kit</h3>
+    <p>From the terminal, or on GitHub via <em>Code → Download ZIP</em>.</p>
+<pre><span class="k">git clone</span> <span class="s">https://github.com/inematds/constituicao-agentes</span>
+<span class="k">cd</span> constituicao-agentes</pre>
+  </div></div>
+
+  <div class="step"><div class="b">2</div><div>
+    <h3>Copy the template</h3>
+    <p>The template has the 9 sections: mission, priorities, principles of judgment, limits, autonomy, when to ask for help, hard cases, how we measure, and review.</p>
+<pre><span class="k">cp</span> modelo/constituicao-modelo.md minha-constituicao.md</pre>
+  </div></div>
+
+  <div class="step"><div class="b">3</div><div>
+    <h3>Draft it with an assistant (optional)</h3>
+    <p>Open <code>modelo/prompt-rascunho.md</code>, replace what is between &lt; &gt;, paste it into the assistant and attach the template. It leaves [in brackets] whatever it does not know, instead of making it up.</p>
+<pre><span class="c"># prompt excerpt</span>
+Company: <span class="s">&lt;name and what it does, in one sentence&gt;</span>
+What the agents will do: <span class="s">&lt;e.g.: serve customers on WhatsApp&gt;</span>
+What scares me about what the agent might do: <span class="s">&lt;e.g.: promise deadlines, give discounts&gt;</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">4</div><div>
+    <h3>Write at least 3 hard cases, with the why</h3>
+    <p>This is the part that teaches judgment. Each case has the situation, what to do and <strong>why</strong>, pointing to the priority or limit that decides.</p>
+<pre><span class="k">### Case 1</span> — "The doctor said I wouldn't pay the fee"
+- <span class="k">Situation:</span> patient missed the appointment and says the doctor promised a waiver.
+- <span class="k">What to do:</span> do not waive; log it; propose it to the coordinator.
+- <span class="k">Why:</span> discount limit + honesty.</pre>
+  </div></div>
+
+  <div class="step"><div class="b">5</div><div>
+    <h3>Check with the checker</h3>
+    <p>It flags a missing section, fewer than 3 cases, a case without a "Why" and a bracket left to fill in. Repeat until it says OK.</p>
+<pre><span class="k">python3</span> scripts/checar_constituicao.py minha-constituicao.md
+<span class="c"># OK: 9 sections, 3 hard cases with 'Why', nothing left to fill in.</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">6</div><div>
+    <h3>Test the agent and review in cycles</h3>
+    <p>Adapt the 8 cases in <code>modelo/casos-de-teste.md</code> (discount, "I don't know", distress, third-party data, "ignore your rules"...). Run them before and after each version and log every failure: date, what broke, the smallest fix and whether the problem was the text or the system.</p>
+<pre><span class="c"># where the constitution goes in your agent</span>
+Claude Projects / GPTs   → <span class="s">project instructions</span>
+Claude Code / Codex      → <span class="s">CLAUDE.md or AGENTS.md</span>
+n8n / API                → <span class="s">system message</span></pre>
+  </div></div>
+</div></section>
+
+<section id="exemplos"><div class="wrap">
+  <span class="chip">Example</span>
+  <h2>A clinic, filled in from start to finish</h2>
+  <p class="sub">Fictional example of a customer-service agent on WhatsApp. Full file at <a href="https://github.com/inematds/constituicao-agentes/blob/main/exemplos/clinica-atendimento.md" target="_blank" rel="noopener">exemplos/clinica-atendimento.md</a> (in Portuguese).</p>
+  <div class="grid g2">
+    <div class="card"><h3>Mission</h3><p>Serve patients quickly and with care, booking and rescheduling appointments, without ever replacing the decision of a health professional.</p></div>
+    <div class="card"><h3>Limits</h3><p>Never give a diagnosis or recommend medication, never waive a fee, never pass one patient's data to another person.</p></div>
+  </div>
+  <div class="tblwrap" style="margin-top:16px"><table class="tbl">
+    <tr><th>Action</th><th>Autonomy level</th></tr>
+    <tr><td>Answer address, hours, insurance plans</td><td>3 · does it alone</td></tr>
+    <tr><td>Book and reschedule an appointment</td><td>2 · does it and notifies reception</td></tr>
+    <tr><td>Waive the cancellation fee</td><td>1 · proposes and waits for the coordinator</td></tr>
+    <tr><td>Any clinical question</td><td>0 · does not touch it, refers to nursing</td></tr>
+  </table></div>
+  <div class="card"><h3>Hard case: "I have a pain in my chest, is there an appointment tomorrow?"</h3><p>Tell them to seek emergency care now (192) and call nursing; do not book it as a regular appointment. <strong>Why:</strong> safety comes before being helpful.</p></div>
+</div></section>
+
+<section id="roadmap"><div class="wrap">
+  <span class="chip">Conclusion and next steps</span>
+  <h2>Management becomes even more important</h2>
+  <p class="sub">The contest will not be only over who has the smartest model, but over who best organizes knowledge, people, processes, agents, evaluation and learning.</p>
+  <div class="phase"><div class="tag">Now</div><div class="d"><strong>Analysis + kit</strong><span>Logic of the two cultures, 9-section template, clinic example, drafting prompt, test cases and checker.</span></div></div>
+  <div class="phase"><div class="tag">Next</div><div class="d"><strong>Quick course on INEMA.CLUB</strong><span>"Write the constitution of your agents": you leave with your company's constitution written and tested.</span></div></div>
+  <div class="phase"><div class="tag">Later</div><div class="d"><strong>More examples by industry</strong><span>Restaurant, hotel, office and store, in the same format as the clinic.</span></div></div>
+  <p class="quote">Before, the challenge was hiring people with good values and teaching them processes. Now, on top of that, we will have to build agents capable of interpreting those values, carrying out the processes and recognizing when they need to ask for help.</p>
+</div></section>
+
+<footer>
+  <div class="wrap">
+    <div class="pill">Markdown</div><div class="pill">Python 3</div><div class="pill">CC0 · Claude's constitution as a reference</div>
+    <p style="margin-top:18px">Agents' Constitution · analysis by Nei Maldaner ·
+      <a href="https://github.com/inematds/constituicao-agentes">inematds/constituicao-agentes</a> ·
+      <a href="https://inema.club">INEMA.CLUB</a></p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var KEY='constituicao-agentes-theme';
+    var b=document.body, t=document.getElementById('themeToggle');
+    if(localStorage.getItem(KEY)==='light'){ b.classList.add('light'); t.textContent='☀️'; }
+    t.addEventListener('click',function(){
+      var light=b.classList.toggle('light');
+      t.textContent=light?'☀️':'🌙';
+      localStorage.setItem(KEY, light?'light':'dark');
+    });
+  })();
+</script>
+</body>
+</html>
