@@ -4,6 +4,10 @@
 
 **🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 [Español](README.es.md)**
 
+## 🎓 Curso rápido
+
+5 aulas de uns 15 minutos (formato v6.2): **https://inematds.github.io/constituicao-agentes-v62/**
+
 ## O que é
 
 Este projeto explica uma ideia: a Anthropic atrai talentos com propósito e autonomia, e também escreve uma "constituição" que ensina o Claude a decidir quando não há regra pronta. Nas duas culturas, o objetivo é o mesmo: formar quem sabe julgar, não só obedecer. Aqui você vê o que os dados provam e o que ainda é hipótese, e recebe um kit para escrever a constituição dos agentes de IA da sua empresa. Para usar, basta ler e preencher o modelo; o verificador opcional pede Python 3.
