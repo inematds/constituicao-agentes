@@ -4,10 +4,6 @@
 
 **🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 [Español](README.es.md)**
 
-## 🎓 Quick course
-
-5 lessons of about 15 minutes: **https://inematds.github.io/constituicao-agentes-v62/en/**
-
 ## What it is
 
 This project explains one idea: Anthropic attracts talent with purpose and autonomy, and it also writes a "constitution" that teaches Claude to decide when there is no ready-made rule. In both cultures, the goal is the same: to shape people who know how to judge, not just obey. Here you see what the data proves and what is still a hypothesis, and you get a kit to write the constitution of your company's AI agents. To use it, just read and fill in the template; the optional checker requires Python 3.
@@ -15,6 +11,10 @@ This project explains one idea: Anthropic attracts talent with purpose and auton
 ## 📖 User guide
 
 Full guide (landing + step by step): **https://inematds.github.io/constituicao-agentes/guia/en/**
+
+## 🎓 Quick course
+
+5 lessons of about 15 minutes: **https://inematds.github.io/constituicao-agentes-v62/en/**
 
 ## What's here
 
