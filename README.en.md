@@ -12,6 +12,8 @@ This project explains one idea: Anthropic attracts talent with purpose and auton
 
 Full guide (landing + step by step): **https://inematds.github.io/constituicao-agentes/guia/en/**
 
+🎬 Video: https://www.youtube.com/shorts/InaeW8YdlEE
+
 ## 🎓 Quick course
 
 5 lessons of about 15 minutes: **https://inematds.github.io/constituicao-agentes-v62/en/**
